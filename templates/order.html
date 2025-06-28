@@ -1,0 +1,88 @@
+{% extends "layout.html" %}
+{% block content %}
+<style>
+    /* Seçilen ürünler için stil */
+    .order-item-row.selected { background-color: #cce5ff !important; }
+    /* Gönderilmiş veya ödenmiş ürünler için stil */
+    .order-item-row.sent, .order-item-row.paid { color: #6c757d; }
+</style>
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Order for {{ order.table.name if order.order_type == 'Dine-In' else order.customer_name }}</h2>
+        <a href="{{ url_for('payment_screen', order_id=order.id) }}" class="btn btn-success">Settle & Pay</a>
+    </div>
+
+    <form id="order-actions-form" method="POST">
+        <div class="row">
+            <!-- Sol Taraf: Sipariş Listesi -->
+            <div class="col-md-7">
+                <h4>Order Items</h4>
+                <div class="list-group mb-3" style="max-height: 50vh; overflow-y: auto;">
+                    {% for item in order.order_items|sort(attribute='id', reverse=True) %}
+                    <label class="list-group-item order-item-row d-flex align-items-center 
+                        {% if item.status == 'Sent' %}sent{% elif item.payment_id %}paid{% endif %}">
+                        <input class="form-check-input me-3" type="checkbox" name="item_ids" value="{{ item.id }}" 
+                               {% if item.status != 'Pending' %}disabled{% endif %}>
+                        <div class="flex-grow-1">
+                            <div class="d-flex w-100 justify-content-between">
+                                <div>
+                                    <strong>{{ item.menu_item.name }}</strong> (x{{ item.quantity }})
+                                    <small class="d-block text-muted">Seat {{ item.seat.seat_number }}</small>
+                                </div>
+                                <div>
+                                    <span class="badge 
+                                        {% if item.payment_id %}bg-success
+                                        {% elif item.status == 'Pending' %}bg-info text-dark
+                                        {% elif item.status == 'Sent' %}bg-warning text-dark
+                                        {% endif %}">
+                                        {{ 'Paid' if item.payment_id else item.status }}
+                                    </span>
+                                    <strong class="ms-2">${{ "%.2f"|format(item.price_at_time_of_order) }}</strong>
+                                </div>
+                            </div>
+                            {% if item.notes %}<p class="mb-1 fst-italic">"{{ item.notes }}"</p>{% endif %}
+                        </div>
+                    </label>
+                    {% else %}
+                    <div class="list-group-item">No items in this order yet.</div>
+                    {% endfor %}
+                </div>
+                
+                <!-- İşlem Butonları -->
+                <div class="btn-toolbar" role="toolbar">
+                    <div class="btn-group me-2">
+                        <button type="submit" formaction="{{ url_for('send_selected_items', order_id=order.id) }}" class="btn btn-success">Send Selected</button>
+                    </div>
+                    <div class="btn-group me-2">
+                        <button type="submit" formaction="{{ url_for('delete_pending_items', order_id=order.id) }}" class="btn btn-danger">Delete Selected</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sağ Taraf: Ürün Ekleme Formu -->
+            <div class="col-md-5">
+                <h4>Add New Item</h4>
+                <!-- Ürün ekleme formu aynı kalabilir -->
+                <form method="POST" action="{{ url_for('add_order_item', order_id=order.id) }}">
+                    <!-- ... (mevcut formunuzu buraya yapıştırın veya aşağıdaki tam kodu kullanın) ... -->
+                </form>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Checkbox'a tıklandığında satırın arkaplan rengini değiştiren basit bir script
+    document.querySelectorAll('.order-item-row .form-check-input').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const row = this.closest('.order-item-row');
+            if (this.checked) {
+                row.classList.add('selected');
+            } else {
+                row.classList.remove('selected');
+            }
+        });
+    });
+</script>
+{% endblock %}

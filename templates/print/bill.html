@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+    <title>Customer Bill</title>
+    <style>
+        body { font-family: 'Courier New', monospace; width: 300px; }
+        h1, p { text-align: center; margin: 5px 0;}
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; border-bottom: 1px solid black; }
+        td { padding: 2px 0; }
+        .right { text-align: right; }
+        .total-line { border-top: 1px solid black; font-weight: bold; }
+    </style>
+</head>
+<body onload="window.print(); setTimeout(function(){window.close();}, 1);">
+    <h1>Your Restaurant</h1>
+    <p>123 Food Street, Toronto, ON</p>
+    <p>Thank you for your visit!</p>
+    <hr>
+    <p>Table: {{ order.table.name }}<br>
+    Server: {{ order.user.username }}<br>
+    Date: {{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+    <hr>
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Qty</th>
+                <th class="right">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order.order_items %}
+            <tr>
+                <td>{{ item.menu_item.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td class="right">${{ "%.2f"|format(item.price_at_time_of_order * item.quantity) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <hr>
+    <table>
+        <tbody>
+            <tr>
+                <td>Subtotal</td>
+                <td class="right">${{ "%.2f"|format(subtotal) }}</td>
+            </tr>
+            <tr>
+                <td>Tax ({{ "%.0f"|format(order.tax_rate*100) }}%)</td>
+                <td class="right">${{ "%.2f"|format(tax) }}</td>
+            </tr>
+            <tr class="total-line">
+                <td>TOTAL (CAD)</td>
+                <td class="right">${{ "%.2f"|format(total) }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <hr>
+    <p>Please pay your server.</p>
+</body>
+</html>

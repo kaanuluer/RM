@@ -1,0 +1,23 @@
+{% extends "report_base.html" %}
+{% block report_content %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Employee</th>
+            <th>Net Sales</th>
+            <th>Total Tips</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for employee in performance_data %}
+        <tr>
+            <td>{{ employee.username }}</td>
+            <td>${{ "%.2f"|format(employee.net_sales) }}</td>
+            <td>${{ "%.2f"|format(employee.total_tips) }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="3" class="text-center">No performance data for this period.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

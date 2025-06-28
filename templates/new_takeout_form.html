@@ -1,0 +1,25 @@
+<!-- templates/new_takeout_form.html -->
+{% extends "layout.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2 class="text-center">New Take-Out Order</h2>
+        <form method="POST">
+            <div class="mb-3">
+                <label for="customer_name" class="form-label">Customer Name</label>
+                <input type="text" name="customer_name" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="customer_phone" class="form-label">Customer Phone (Optional)</label>
+                <input type="tel" name="customer_phone" class="form-control">
+            </div>
+            <!-- YENİ EKLENEN ALAN -->
+            <div class="mb-3">
+                <label for="pickup_time" class="form-label">Pickup Time</label>
+                <input type="text" name="pickup_time" class="form-control" placeholder="e.g., ASAP, 18:30, Now">
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Create Order and Add Items</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+<!-- templates/login.html - DOĞRU HALİ -->
+{% extends "layout.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-4">
+        <h2 class="text-center">Login / Clock In</h2>
+        <!-- Formun action'ı boş olmalı ki aynı URL'e POST yapsın -->
+        <form method="POST" action="">
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <!-- name="username" doğru olmalı -->
+                <input type="text" name="username" id="username" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <!-- name="password" doğru olmalı -->
+                <input type="password" name="password" id="password" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Login & Clock In</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

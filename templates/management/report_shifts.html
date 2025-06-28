@@ -1,0 +1,33 @@
+{% extends "report_base.html" %}
+{% block report_content %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Employee</th>
+            <th>Clock In</th>
+            <th>Clock Out</th>
+            <th>Total Hours</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for shift in shifts %}
+        <tr>
+            <td>{{ shift.user.username }}</td>
+            <td>{{ shift.clock_in.strftime('%Y-%m-%d %H:%M') }}</td>
+            <td>{{ shift.clock_out.strftime('%Y-%m-%d %H:%M') if shift.clock_out else 'Still Clocked In' }}</td>
+            <td>
+                {% if shift.clock_out %}
+                    {{ "%.2f"|format(shift.total_hours) }}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="4" class="text-center">No shift data found for the selected period.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

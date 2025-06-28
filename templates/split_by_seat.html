@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Split by Seat for Order #{{ order.id }}</h2>
+    <p>Select a seat to pay for all of its unpaid items.</p>
+    <div class="list-group">
+        {% for seat_id, data in seats_data.items() %}
+            <form action="{{ url_for('process_payment', order_id=order.id) }}" method="get" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-1">Seat {{ data.number }} - <span class="text-danger">${{ "%.2f"|format(data.total) }}</span></h5>
+                    {% for item in data.items %}
+                        <input type="hidden" name="item_id" value="{{ item.id }}">
+                        <span class="badge bg-secondary me-1">{{ item.menu_item.name }}</span>
+                    {% endfor %}
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">Pay for this Seat</button>
+            </form>
+        {% else %}
+            <div class="list-group-item"><p class="mb-0">All seats have been paid.</p></div>
+        {% endfor %}
+    </div>
+    <a href="{{ url_for('payment_options', order_id=order.id) }}" class="btn btn-secondary mt-3">Back to Payment Options</a>
+</div>
+{% endblock %}

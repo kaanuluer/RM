@@ -1,0 +1,42 @@
+<!-- templates/floor_plan.html -->
+{% extends "layout.html" %}
+{% block content %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Floor Plan</h1>
+        <a href="{{ url_for('takeout_list') }}" class="btn btn-info">View Take-Out Orders</a>
+    </div>
+
+    <!-- Her bir bölüm için bir döngü oluştur -->
+    {% for section in sections %}
+        <h3 class="mt-4 mb-3" style="border-bottom: 2px solid #eee; padding-bottom: 5px;">{{ section.name }}</h3>
+        <div class="row">
+            <!-- O bölüme ait masaları listele -->
+            {% for table in section.tables %}
+                {% if not table.is_special %}
+                <div class="col-md-3 mb-4">
+                    <div class="card text-center">
+                        <div class="card-header">{{ table.name }}</div>
+                        <div class="card-body">
+                            <h5 class="card-title">Status: <span class="badge bg-{% if table.status == 'Available' %}success{% elif table.status == 'Occupied' %}danger{% endif %}">{{ table.status }}</span></h5>
+                            {% set active_order = table.orders | selectattr('is_closed', 'false') | first %}
+                            {% if table.status == 'Available' %}
+                                <a href="{{ url_for('new_order', table_id=table.id) }}" class="btn btn-success">Create Order</a>
+                            {% elif active_order %}
+                                <a href="{{ url_for('view_order', order_id=active_order.id) }}" class="btn btn-primary">View Order</a>
+                            {% else %}
+                                 <a href="#" class="btn btn-secondary disabled">Error</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            {% else %}
+                <div class="col-12"><p class="text-muted">No tables in this section.</p></div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-warning">
+            No sections found. Please add a section in <a href="{{ url_for('layout_management') }}">Layout Management</a>.
+        </div>
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container text-center">
+    <h2 class="mb-4">
+        Pay Order for 
+        {% if order.table and not order.table.is_special %}
+            {{ order.table.name }}
+        {% else %}
+            {{ order.customer_name or "Take-Out" }}
+        {% endif %}
+    </h2>
+    
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card p-3 mb-4">
+                <p><strong>Total Due:</strong><span class="float-end fs-4">${{ "%.2f"|format(total_due) }}</span></p>
+                <p><strong>Total Paid:</strong><span class="float-end text-success">${{ "%.2f"|format(total_paid) }}</span></p>
+                <hr>
+                <h4 class="text-danger"><strong>Remaining Balance:</strong><span class="float-end">${{ "%.2f"|format(remaining_balance) }}</span></h4>
+            </div>
+
+            {% if remaining_balance > 0.01 %}
+            <h4 class="mb-3">Payment Options</h4>
+            <div class="list-group">
+                <a href="{{ url_for('split_bill_by_item', order_id=order.id) }}" class="list-group-item list-group-item-action">Split by Item</a>
+                <a href="{{ url_for('split_bill_by_seat', order_id=order.id) }}" class="list-group-item list-group-item-action">Split by Seat</a>
+                <!-- BU LİNK ARTIK BASİT VE DOĞRU -->
+                <a href="{{ url_for('pay_full_bill', order_id=order.id) }}" class="list-group-item list-group-item-action">Pay Remaining Balance</a>
+            </div>
+            {% else %}
+            <div class="alert alert-success">
+                <h4>Bill Fully Paid!</h4>
+                <a href="{{ url_for('close_order', order_id=order.id) }}" class="btn btn-success">Close Order</a>
+            </div>
+            {% endif %}
+            <h4 class="mt-5">Payment History</h4>
+            <ul class="list-group">
+                {% for p in order.payments %}<li class="list-group-item">Payment #${{p.id}}: ${{ "%.2f"|format(p.subtotal + p.tax_amount)}} via {{p.payment_method}} (Tip: ${{ "%.2f"|format(p.tip_amount)}})</li>{% else %}<li class="list-group-item">No payments yet.</li>{% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

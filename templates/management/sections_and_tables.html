@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container">
+    <h2>Layout Management</h2>
+    <p>Manage restaurant sections and the tables within them.</p>
+
+    <div class="row">
+        <!-- Sol Taraf: Bölüm Ekleme ve Listeleme -->
+        <div class="col-md-5">
+            <h4>Sections</h4>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Add New Section</h5>
+                    <form method="POST" action="{{ url_for('add_section') }}">
+                        <div class="input-group">
+                            <input type="text" name="section_name" class="form-control" placeholder="e.g., Patio, Bar Area" required>
+                            <button class="btn btn-primary" type="submit">Add Section</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <h5>Existing Sections</h5>
+            <div class="list-group">
+                {% for section in sections %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ section.name }}
+                        <a href="{{ url_for('delete_section', section_id=section.id) }}" class="btn btn-sm btn-outline-danger">Delete</a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Sağ Taraf: Masa Ekleme ve Listeleme -->
+        <div class="col-md-7">
+            <h4>Tables</h4>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Add New Table</h5>
+                    <form method="POST" action="{{ url_for('add_table') }}">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-5">
+                                <label for="table_name" class="form-label">Table Name</label>
+                                <input type="text" id="table_name" name="table_name" class="form-control" placeholder="e.g., T1, B2" required>
+                            </div>
+                            <div class="col-md-5">
+                                <label for="section_id" class="form-label">Assign to Section</label>
+                                <select id="section_id" name="section_id" class="form-select" required>
+                                    <option value="" disabled selected>Choose a section...</option>
+                                    {% for section in sections %}
+                                        <option value="{{ section.id }}">{{ section.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-primary w-100" type="submit">Add</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <h5>Existing Tables by Section</h5>
+            {% for section in sections %}
+                <h6>{{ section.name }}</h6>
+                <ul class="list-group mb-3">
+                    {% for table in section.tables %}
+                        {% if not table.is_special %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ table.name }}
+                            <a href="{{ url_for('delete_table', table_id=table.id) }}" class="btn btn-sm btn-outline-danger">Delete</a>
+                        </li>
+                        {% endif %}
+                    {% else %}
+                        <li class="list-group-item text-muted">No tables in this section yet.</li>
+                    {% endfor %}
+                </ul>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

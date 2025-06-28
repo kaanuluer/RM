@@ -1,0 +1,42 @@
+<!-- templates/takeout_list.html -->
+{% extends "layout.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Active Take-Out Orders</h1>
+    <a href="{{ url_for('new_takeout_order') }}" class="btn btn-primary">New Take-Out Order</a>
+</div>
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Customer Name</th>
+                <th>Phone</th>
+                <th>Pickup Time</th>
+                <th>Total</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in takeout_orders %}
+            <tr>
+                <td>#{{ order.id }}</td>
+                <td>{{ order.customer_name }}</td>
+                <td>{{ order.customer_phone or 'N/A' }}</td>
+                <td><span class="badge bg-info">{{ order.pickup_time or 'ASAP' }}</span></td>
+                <!-- HATA DÜZELTMESİ: order_totals sözlüğünü doğru kullanma -->
+                <td>${{ "%.2f"|format(order_totals.get(order.id, 0.0)) }}</td>
+                <td>
+                    <a href="{{ url_for('view_order', order_id=order.id) }}" class="btn btn-sm btn-primary">View/Edit</a>
+                    <a href="{{ url_for('payment_screen', order_id=order.id) }}" class="btn btn-sm btn-success">Pay</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" class="text-center">No active take-out orders.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container">
+    <h2>Split by Item for Order #{{ order.id }}</h2>
+    <p>Select items to include in this payment, then proceed.</p>
+    <form method="POST" action="{{ url_for('process_payment', order_id=order.id) }}">
+        <div class="row">
+            <div class="col-md-8">
+                <h4>Unpaid Items</h4>
+                <ul class="list-group">
+                    {% for item in unpaid_items %}
+                    <li class="list-group-item">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="item_ids" value="{{ item.id }}" id="item-{{item.id}}">
+                            <label class="form-check-label" for="item-{{item.id}}"><strong>{{ item.menu_item.name }}</strong> (Seat {{ item.seat.seat_number }}) - ${{ "%.2f"|format(item.price_at_time_of_order) }}</label>
+                        </div>
+                    </li>
+                    {% else %}<li class="list-group-item">All items have been paid.</li>{% endfor %}
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h4>Payment Details</h4>
+                <div class="mb-3"><label for="payment_method" class="form-label">Payment Method</label><select name="payment_method" class="form-select" required><option value="Cash">Cash</option><option value="Debit">Debit</option><option value="Visa">Visa</option><option value="Mastercard">Mastercard</option><option value="AMEX">AMEX</option></select></div>
+                <div class="mb-3"><label for="amount_paid" class="form-label">Amount Paid by Customer</label><input type="number" step="0.01" class="form-control" name="amount_paid" required placeholder="Enter amount"></div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-success">Finalize This Payment</button>
+                    <a href="{{ url_for('payment_options', order_id=order.id) }}" class="btn btn-secondary mt-2">Back to Options</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
