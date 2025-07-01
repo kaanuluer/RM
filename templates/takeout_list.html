@@ -1,4 +1,3 @@
-<!-- templates/takeout_list.html -->
 {% extends "layout.html" %}
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -24,7 +23,6 @@
                 <td>{{ order.customer_name }}</td>
                 <td>{{ order.customer_phone or 'N/A' }}</td>
                 <td><span class="badge bg-info">{{ order.pickup_time or 'ASAP' }}</span></td>
-                <!-- HATA DÜZELTMESİ: order_totals sözlüğünü doğru kullanma -->
                 <td>${{ "%.2f"|format(order_totals.get(order.id, 0.0)) }}</td>
                 <td>
                     <a href="{{ url_for('view_order', order_id=order.id) }}" class="btn btn-sm btn-primary">View/Edit</a>

@@ -4,18 +4,24 @@
     <div class="col-md-4">
         <div class="card">
             <div class="card-body">
-                <h2 class="text-center mb-4">Login & Clock In</h2>
-                <form method="POST" action="">
+                <h2 class="text-center mb-4">Clock In</h2>
+                <p class="text-center text-muted">Enter your credentials to start your shift.</p>
+                <form method="POST" action="{{ url_for('clock_in') }}">
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
-                        <input type="text" name="username" class="form-control" required>
+                        <input type="text" name="username" class="form-control" required autofocus>
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
                         <input type="password" name="password" class="form-control" required>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary w-100">Confirm Clock In</button>
+                    </div>
                 </form>
+                <div class="text-center mt-3">
+                    <a href="{{ url_for('floor_plan') }}">Back to Floor Plan</a>
+                </div>
             </div>
         </div>
     </div>

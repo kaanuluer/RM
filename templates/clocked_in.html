@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="text-center">
+    <h1 class="display-4">Welcome, {{ current_user.full_name }}!</h1>
+    <p class="lead">You are clocked in as a {{ current_user.role }}.</p>
+    <p>Your shift has started. You can now log out when your shift is over.</p>
+    <a href="{{ url_for('logout') }}" class="btn btn-lg btn-danger mt-3">Clock Out</a>
+</div>
+{% endblock %}

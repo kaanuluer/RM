@@ -1,0 +1,32 @@
+{% set active_order = table.orders | selectattr('is_closed', 'false') | first %}
+<!-- Tıklanabilir alan, modal'ı tetikler -->
+<div class="table-card-content" 
+     data-bs-toggle="modal" data-bs-target="#pinModal" 
+     data-table-id="{{ table.id }}" data-table-name="{{ table.name }}">
+    <div class="card h-100 table-card">
+        <div class="card-header fw-bold text-center">{{ table.name }}</div>
+        <div class="card-body">
+            <div class="table-status-container text-center">
+                {% if active_order and active_order.bill_printed_at %}
+                    <span class="badge status-badge status-bill-printed">Bill Printed</span>
+                    <p class="card-text text-muted mt-2 server-name"><small>Server: {{ active_order.user.full_name }}</small></p>
+                {% elif table.status == 'Occupied' %}
+                    <span class="badge status-badge bg-danger">Occupied</span>
+                    <p class="card-text text-muted mt-2 server-name">
+                        {% if active_order %}<small>Server: {{ active_order.user.full_name }}</small>{% endif %}
+                    </p>
+                {% else %}
+                    <span class="badge status-badge bg-success">Available</span>
+                    <p class="card-text text-muted mt-2 server-name"> </p>
+                {% endif %}
+            </div>
+            <div class="mt-auto action-button-container">
+                {% if active_order %}
+                    <span class="btn btn-sm btn-primary w-100">View Order</span>
+                {% else %}
+                    <span class="btn btn-sm btn-success w-100">Create Order</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

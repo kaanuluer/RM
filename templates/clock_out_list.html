@@ -1,0 +1,68 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container text-center">
+    <h2 class="mb-4">Clock Out</h2>
+    <p>Select your name from the list to clock out.</p>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="list-group">
+                {% for user in users %}
+                <button type="button" class="list-group-item list-group-item-action"
+                        data-bs-toggle="modal" data-bs-target="#clockOutPinModal"
+                        data-user-id="{{ user.id }}" data-user-name="{{ user.full_name }}">
+                    <span class="fs-4">{{ user.full_name }}</span>
+                    <small class="d-block text-muted">#{{ user.employee_number }} - {{ user.role }}</small>
+                </button>
+                {% else %}
+                <div class="list-group-item">No users are currently clocked in.</div>
+                {% endfor %}
+            </div>
+            <a href="{{ url_for('floor_plan') }}" class="btn btn-secondary mt-4">Back to Floor Plan</a>
+        </div>
+    </div>
+</div>
+
+<!-- Clock Out için Şifre Giriş Modal'ı -->
+<div class="modal fade" id="clockOutPinModal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="clockOutModalLabel">Clock Out</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="clock-out-form" method="POST" action="{{ url_for('clock_out_list') }}">
+                <div class="modal-body text-center">
+                    <h4 id="modal-user-name"></h4>
+                    <input type="hidden" name="user_id" id="modal-user-id">
+                    <label for="password_input" class="form-label">Enter Your Password</label>
+                    <input type="password" name="password" id="password_input" class="form-control form-control-lg text-center" required autofocus>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Confirm Clock Out</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const clockOutModal = document.getElementById('clockOutPinModal');
+    clockOutModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const userId = button.getAttribute('data-user-id');
+        const userName = button.getAttribute('data-user-name');
+        
+        const modalUserName = clockOutModal.querySelector('#modal-user-name');
+        const modalUserIdInput = clockOutModal.querySelector('#modal-user-id');
+        
+        modalUserName.textContent = userName;
+        modalUserIdInput.value = userId;
+    });
+    clockOutModal.addEventListener('shown.bs.modal', function () {
+        document.getElementById('password_input').focus();
+    });
+</script>
+{% endblock %}
