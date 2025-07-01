@@ -60,7 +60,14 @@ def get_order_totals(order_id):
     subtotal_due = sum(item.price_at_time_of_order * item.quantity for item in unpaid_items)
     total_due = subtotal_due * (1 + order.tax_rate)
     total_paid = sum(p.subtotal + p.tax_amount for p in order.payments)
-    return {"order": order, "unpaid_items": unpaid_items, "total_due": total_due, "total_paid": total_paid, "remaining_balance": total_due}
+    remaining_balance = total_due - total_paid
+    return {
+        "order": order,
+        "unpaid_items": unpaid_items,
+        "total_due": total_due,
+        "total_paid": total_paid,
+        "remaining_balance": remaining_balance,
+    }
 
 def get_date_range_from_request():
     end_date_str = request.args.get('end_date', date.today().isoformat())
