@@ -1,23 +1,11 @@
 {% extends "report_base.html" %}
 {% block report_content %}
 <table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Menu Item</th>
-            <th>Quantity Sold</th>
-            <th>Total Revenue</th>
-        </tr>
-    </thead>
+    <thead><tr><th>Menu Item</th><th>Quantity Sold</th><th>Total Revenue</th></tr></thead>
     <tbody>
         {% for item in product_mix %}
-        <tr>
-            <td>{{ item.name }}</td>
-            <td>{{ item.quantity_sold }}</td>
-            <td>${{ "%.2f"|format(item.total_revenue) }}</td>
-        </tr>
-        {% else %}
-        <tr><td colspan="3" class="text-center">No sales data for this period.</td></tr>
-        {% endfor %}
+        <tr><td>{{ item.name }}</td><td>{{ item.quantity_sold }}</td><td>${{ "%.2f"|format(item.total_revenue) }}</td></tr>
+        {% else %}<tr><td colspan="3" class="text-center">No sales data for this period.</td></tr>{% endfor %}
     </tbody>
 </table>
 {% endblock %}

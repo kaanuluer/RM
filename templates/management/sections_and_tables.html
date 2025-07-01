@@ -1,81 +1,59 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="container">
-    <h2>Layout Management</h2>
-    <p>Manage restaurant sections and the tables within them.</p>
-
+    <h2>Layout Management</h2><p>Manage restaurant sections and the tables within them.</p>
     <div class="row">
-        <!-- Sol Taraf: Bölüm Ekleme ve Listeleme -->
         <div class="col-md-5">
             <h4>Sections</h4>
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">Add New Section</h5>
-                    <form method="POST" action="{{ url_for('add_section') }}">
-                        <div class="input-group">
-                            <input type="text" name="section_name" class="form-control" placeholder="e.g., Patio, Bar Area" required>
-                            <button class="btn btn-primary" type="submit">Add Section</button>
-                        </div>
-                    </form>
-                </div>
+            <!-- "Add New Section" başlığının altındaki tüm card div'ini bununla değiştirin -->
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Add New Section</h5>
+        <form method="POST" action="{{ url_for('add_section') }}">
+            <div class="mb-3">
+                <label for="section_name_input" class="form-label">Section Name</label>
+                <!-- DİKKAT: name="section_name" olmalı -->
+                <input type="text" name="section_name" id="section_name_input" class="form-control" placeholder="e.g., Patio, Bar Area" required>
             </div>
-
-            <h5>Existing Sections</h5>
+            <div class="mb-3">
+                <label for="default_printer_id" class="form-label">Default Kitchen/Bar Printer</label>
+                <select name="default_printer_id" id="default_printer_id" class="form-select">
+                    <option value="">-- None --</option>
+                    {% for printer in printers %}
+                        <option value="{{ printer.id }}">{{ printer.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="receipt_printer_id" class="form-label">Default Receipt Printer</label>
+                <select name="receipt_printer_id" id="receipt_printer_id" class="form-select">
+                    <option value="">-- None --</option>
+                    {% for printer in printers %}
+                        <option value="{{ printer.id }}">{{ printer.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button class="btn btn-primary" type="submit">Add Section</button>
+        </form>
+    </div>
+</div>
+<h5>Existing Sections</h5>
             <div class="list-group">
-                {% for section in sections %}
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                        {{ section.name }}
-                        <a href="{{ url_for('delete_section', section_id=section.id) }}" class="btn btn-sm btn-outline-danger">Delete</a>
-                    </div>
-                {% endfor %}
+                {% for section in sections %}<div class="list-group-item d-flex justify-content-between align-items-center"><div>
+                    <strong>{{ section.name }}</strong>
+                    <small class="d-block text-muted">Kitchen/Bar Printer: {{ section.printer.name if section.printer else 'N/A' }}</small>
+                    <!-- YENİ BİLGİ -->
+                    <small class="d-block text-muted">Receipt Printer: {{ section.receipt_printer.name if section.receipt_printer else 'N/A' }}</small>
+                </div>{{ section.name }}<a href="{{ url_for('delete_section', section_id=section.id) }}" class="btn btn-sm btn-outline-danger">Delete</a></div>{% endfor %}
             </div>
         </div>
-
-        <!-- Sağ Taraf: Masa Ekleme ve Listeleme -->
         <div class="col-md-7">
             <h4>Tables</h4>
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">Add New Table</h5>
-                    <form method="POST" action="{{ url_for('add_table') }}">
-                        <div class="row g-3 align-items-end">
-                            <div class="col-md-5">
-                                <label for="table_name" class="form-label">Table Name</label>
-                                <input type="text" id="table_name" name="table_name" class="form-control" placeholder="e.g., T1, B2" required>
-                            </div>
-                            <div class="col-md-5">
-                                <label for="section_id" class="form-label">Assign to Section</label>
-                                <select id="section_id" name="section_id" class="form-select" required>
-                                    <option value="" disabled selected>Choose a section...</option>
-                                    {% for section in sections %}
-                                        <option value="{{ section.id }}">{{ section.name }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <button class="btn btn-primary w-100" type="submit">Add</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
+            <div class="card mb-4"><div class="card-body"><h5 class="card-title">Add New Table</h5><form method="POST" action="{{ url_for('add_table') }}"><div class="row g-3 align-items-end"><div class="col-md-5"><label for="table_name" class="form-label">Table Name</label><input type="text" id="table_name" name="table_name" class="form-control" placeholder="e.g., T1, B2" required></div><div class="col-md-5"><label for="section_id" class="form-label">Assign to Section</label><select id="section_id" name="section_id" class="form-select" required><option value="" disabled selected>Choose...</option>{% for section in sections %}<option value="{{ section.id }}">{{ section.name }}</option>{% endfor %}</select></div><div class="col-md-2"><button class="btn btn-primary w-100" type="submit">Add</button></div></div></form></div></div>
             <h5>Existing Tables by Section</h5>
-            {% for section in sections %}
-                <h6>{{ section.name }}</h6>
-                <ul class="list-group mb-3">
-                    {% for table in section.tables %}
-                        {% if not table.is_special %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            {{ table.name }}
-                            <a href="{{ url_for('delete_table', table_id=table.id) }}" class="btn btn-sm btn-outline-danger">Delete</a>
-                        </li>
-                        {% endif %}
-                    {% else %}
-                        <li class="list-group-item text-muted">No tables in this section yet.</li>
-                    {% endfor %}
-                </ul>
-            {% endfor %}
+            {% for section in sections %}<h6>{{ section.name }}</h6><ul class="list-group mb-3">
+                {% for table in section.tables %}{% if not table.is_special %}<li class="list-group-item d-flex justify-content-between align-items-center">{{ table.name }}<a href="{{ url_for('delete_table', table_id=table.id) }}" class="btn btn-sm btn-outline-danger">Delete</a></li>{% endif %}{% else %}<li class="list-group-item text-muted">No tables in this section.</li>{% endfor %}
+            </ul>{% endfor %}
         </div>
     </div>
 </div>

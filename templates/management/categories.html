@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="row">
+    <!-- Sol Taraf: Kategori Ekleme -->
+    <div class="col-md-4">
+        <h3>Add New Category</h3>
+        <div class="card">
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('add_category') }}">
+                    <div class="mb-3">
+                        <label for="category_name" class="form-label">Category Name</label>
+                        <input type="text" class="form-control" name="category_name" id="category_name" required placeholder="e.g., Desserts, Wines">
+                    </div>
+                    <div class="mb-3">
+                        <label for="printer_id" class="form-label">Assign to Printer</label>
+                        <select class="form-select" name="printer_id" id="printer_id" required>
+                            <option value="" disabled selected>Choose a printer...</option>
+                            {% for printer in printers %}
+                                <option value="{{ printer.id }}">{{ printer.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Add Category</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Sağ Taraf: Mevcut Kategorileri Listeleme -->
+    <div class="col-md-8">
+        <h3>Existing Categories</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Category Name</th>
+                    <th>Assigned Printer</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in categories %}
+                <tr>
+                    <td>{{ category.name }}</td>
+                    <td>{{ category.printer.name }}</td>
+                    <td>
+                        <a href="{{ url_for('delete_category', category_id=category.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure? Deleting a category will also delete all menu items within it!');">
+                            <i class="bi bi-trash"></i> Delete
+                        </a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="3" class="text-center">No categories found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

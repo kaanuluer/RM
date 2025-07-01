@@ -1,0 +1,78 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container">
+    <div class="pb-3 mb-4 border-bottom">
+        <a href="{{ url_for('floor_plan') }}" class="d-flex align-items-center text-dark text-decoration-none">
+            <i class="bi-speedometer2 fs-2 me-2"></i>
+            <span class="fs-4">Management Dashboard</span>
+        </a>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <!-- Layout & Floor Plan -->
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-grid-3x3-gap-fill me-2"></i>Layout & Tables</h5>
+                    <p class="card-text">Manage restaurant sections and the tables within them.</p>
+                    <a href="{{ url_for('layout_management') }}" class="btn btn-primary">Go to Layouts</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu & Categories -->
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-book-fill me-2"></i>Menu & Items</h5>
+                    <p class="card-text">Manage menu items and their categories.</p>
+                    <a href="{{ url_for('menu_management') }}" class="btn btn-primary me-2">Manage Items</a>
+                    <a href="{{ url_for('category_management') }}" class="btn btn-secondary">Manage Categories</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Staff Management -->
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-people-fill me-2"></i>Staff</h5>
+                    <p class="card-text">Add, edit, or remove staff members and manage their roles.</p>
+                    <a href="{{ url_for('staff_management') }}" class="btn btn-primary">Go to Staff</a>
+                </div>
+            </div>
+        </div>
+        <!-- Staff Management -->
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-people-fill me-2"></i>Logout</h5>
+                    <p class="card-text">Logout</p>
+                    <a href="{{ url_for('exit_management') }}" class="btn btn-warning">Exit Management Mode</a>
+                </div>
+            </div>
+        </div>
+        <!-- Printers -->
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-printer-fill me-2"></i>Printers</h5>
+                    <p class="card-text">Configure kitchen, bar, and receipt printers.</p>
+                    <a href="{{ url_for('printer_management') }}" class="btn btn-primary">Go to Printers</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports -->
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-file-earmark-bar-graph-fill me-2"></i>Reports</h5>
+                    <p class="card-text">View sales, performance, and operational reports.</p>
+                    <a href="{{ url_for('reports_dashboard') }}" class="btn btn-primary">Go to Reports</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
