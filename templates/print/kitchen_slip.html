@@ -1,51 +1,18 @@
-<!-- templates/print/kitchen_slip.html -->
 <!doctype html>
 <html>
 <head>
     <title>Kitchen Slip</title>
-    <style>
-        body { font-family: 'Courier New', monospace; width: 280px; font-size: 14px; }
-        h1, h2, h3 { margin: 0; text-align: center; }
-        hr { border: 1px dashed black; margin-top: 5px; margin-bottom: 5px;}
-        .item { font-size: 1.1em; margin-bottom: 5px; }
-        .notes { padding-left: 20px; font-style: italic; font-weight: bold; }
-        p { margin: 2px 0; }
-        .customer-info { border: 2px solid black; padding: 5px; margin-top: 5px; text-align: center; }
-    </style>
+    <style>body { font-family: 'Courier New', monospace; width: 280px; font-size: 14px; } h1, h2, h3 { margin: 0; text-align: center; } hr { border: 1px dashed black; margin-top: 5px; margin-bottom: 5px;} .item { font-size: 1.1em; margin-bottom: 5px; } .notes { padding-left: 20px; font-style: italic; font-weight: bold; } p { margin: 2px 0; } .customer-info { border: 2px solid black; padding: 5px; margin-top: 5px; text-align: center; }</style>
 </head>
 <body onload="window.print(); setTimeout(function(){window.close();}, 1);">
     <h3>** {{ printer_name | upper }} ORDER **</h3>
-    
-    <!-- Sipariş türüne göre başlığı değiştir -->
-    {% if order.order_type == 'Take-Out' %}
-        <div class="customer-info">
-            <h2>TAKE-OUT</h2>
-            <strong>For: {{ order.customer_name }}</strong><br>
-            Phone: {{ order.customer_phone or 'N/A' }}<br>
-            <strong>PICKUP: {{ order.pickup_time or 'ASAP' }}</strong>
-        </div>
-    {% else %}
-        <h1>{{ order.table.name }}</h1>
-    {% endif %}
-
-    <p>Waiter: {{ order.user.username }} | Order #{{ order.id }}</p>
-    <p>Time: {{ timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</p>
-    <hr>
-    {% for item in items_to_print %}
-        <div class="item">
-            <strong>{{ item.quantity }}x {{ item.menu_item.name.upper() }}</strong>
-            <!-- Dine-In ise koltuk numarasını göster -->
-            {% if order.order_type == 'Dine-In' %}
-            <br>
-            <span style="padding-left: 15px;">FOR SEAT: {{ item.seat.seat_number }}</span>
-            {% endif %}
-        </div>
-        {% if item.notes %}
-        <div class="notes">
-            => {{ item.notes }}
-        </div>
-        {% endif %}
-        <hr style="border-style: dotted;">
+    {% if order.order_type == 'Take-Out' %}<div class="customer-info"><h2>TAKE-OUT</h2><strong>For: {{ order.customer_name }}</strong><br>Phone: {{ order.customer_phone or 'N/A' }}<br><strong>PICKUP: {{ order.pickup_time or 'ASAP' }}</strong></div>
+    {% else %}<h1>{{ order.table.name }}</h1>{% endif %}
+    <p>Waiter: {{ order.user.username }} | Order #{{ order.id }}</p><p>Time: {{ timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</p><hr>
+    {% for item in items_to_print %}<div class="item"><strong>{{ item.quantity }}x {{ item.menu_item.name.upper() }}</strong>
+        {% if order.order_type == 'Dine-In' %}<br><span style="padding-left: 15px;">FOR SEAT: {{ item.seat.seat_number }}</span>{% endif %}
+    </div>
+    {% if item.notes %}<div class="notes">=> {{ item.notes }}</div>{% endif %}<hr style="border-style: dotted;">
     {% endfor %}
 </body>
 </html>

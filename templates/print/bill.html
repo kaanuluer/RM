@@ -3,60 +3,67 @@
 <head>
     <title>Customer Bill</title>
     <style>
-        body { font-family: 'Courier New', monospace; width: 300px; }
-        h1, p { text-align: center; margin: 5px 0;}
-        table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; border-bottom: 1px solid black; }
-        td { padding: 2px 0; }
+        @media print { .bill-wrapper { page-break-after: always; } }
+        body { font-family: 'Courier New', monospace; font-size: 12px; }
+        .bill-wrapper { width: 320px; margin: 0 auto 20px auto; padding: 10px; border: 1px solid #ccc; }
+        .center { text-align: center; }
         .right { text-align: right; }
-        .total-line { border-top: 1px solid black; font-weight: bold; }
+        .line { margin: 5px 0; border-top: 1px dashed black; }
+        table { width: 100%; }
+        .total-due { font-size: 1.2em; font-weight: bold; }
+        .info p, .header p { margin: 1px 0; }
     </style>
 </head>
-<body onload="window.print(); setTimeout(function(){window.close();}, 1);">
-    <h1>Your Restaurant</h1>
-    <p>123 Food Street, Toronto, ON</p>
-    <p>Thank you for your visit!</p>
-    <hr>
-    <p>Table: {{ order.table.name }}<br>
-    Server: {{ order.user.username }}<br>
-    Date: {{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
-    <hr>
+<body onload="window.print();">
+
+{% for bill in bills %}
+<div class="bill-wrapper">
+    <div class="header center">
+        <img src="{{ url_for('static', filename='images/bt.png') }}" alt="Restaurant Logo" class="logo">
+        <h4>{{ restaurant_info.get('restaurant_name', 'Your Restaurant') }}</h4>
+        <p>{{ restaurant_info.get('address_line_1', '') }}</p>
+        <p>{{ restaurant_info.get('address_line_2', '') }}</p>
+        <p>Tel. {{ restaurant_info.get('phone_number', '') }}</p>
+    </div>
+    <div class="line"></div>
+    <div class="info">
+        <p>{{ timestamp.strftime('%m/%d/%y %I:%M %p') }}</p>
+        <p>Table {{ order.table.name if order.table else "Take-Out" }} / Order #{{ order.id }}</p>
+        <p>Server: {{ order.user.full_name }}</p>
+        {% if bill.title != 'Full Bill' %}
+            <h5 class="center">{{ bill.title }}</h5>
+        {% endif %}
+    </div>
+    <div class="line"></div>
     <table>
-        <thead>
-            <tr>
-                <th>Item</th>
-                <th>Qty</th>
-                <th class="right">Total</th>
-            </tr>
-        </thead>
         <tbody>
-            {% for item in order.order_items %}
+            <!-- THIS IS THE FIX -->
+            {% for item in bill['items'] %}
             <tr>
-                <td>{{ item.menu_item.name }}</td>
-                <td>{{ item.quantity }}</td>
+                <td>{{ item.quantity }} {{ item.menu_item.name }}</td>
                 <td class="right">${{ "%.2f"|format(item.price_at_time_of_order * item.quantity) }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    <hr>
+    <div class="line"></div>
     <table>
         <tbody>
-            <tr>
-                <td>Subtotal</td>
-                <td class="right">${{ "%.2f"|format(subtotal) }}</td>
-            </tr>
-            <tr>
-                <td>Tax ({{ "%.0f"|format(order.tax_rate*100) }}%)</td>
-                <td class="right">${{ "%.2f"|format(tax) }}</td>
-            </tr>
-            <tr class="total-line">
-                <td>TOTAL (CAD)</td>
-                <td class="right">${{ "%.2f"|format(total) }}</td>
-            </tr>
+            <tr><td>Sub-total:</td><td class="right">${{ "%.2f"|format(bill.subtotal) }}</td></tr>
+            <tr><td>H.S.T.:</td><td class="right">${{ "%.2f"|format(bill.tax) }}</td></tr>
         </tbody>
     </table>
-    <hr>
-    <p>Please pay your server.</p>
+    <div class="line"></div>
+    <div class="total-due">
+        <table><tr><td>Total Due:</td><td class="right">${{ "%.2f"|format(bill.total) }}</td></tr></table>
+    </div>
+    <div class="line"></div>
+    <div class="footer center">
+        <p>{{ restaurant_info.get('footer_message_2', '~Thank You~') }}</p>
+        <p>H.S.T. {{ restaurant_info.get('hst_number', '') }}</p>
+    </div>
+</div>
+{% endfor %}
+
 </body>
 </html>
