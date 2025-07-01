@@ -1,3 +1,8 @@
-﻿Flask
+Flask
 Flask-SQLAlchemy
 Flask-Login
+Flask-Migrate
+pytz
+python-escpos==3.1
+Flask-SocketIO
+eventlet
